@@ -45,7 +45,6 @@ class Screen {
         ];
 
         $width = exec('tput cols'); // width of terminal
-        // $height = exec('tput lines');
 
         // avoid printing funky characters
         $string = str_replace("\n", '', $string);
@@ -57,10 +56,10 @@ class Screen {
             $this->x = $x ?? $this->x;
             $this->y = $y ?? $this->y;
 
-            echo "\033[" . ($y ?? $this->y) . ';' . ($x ?? $this->x) . 'H';
+            echo "\033[" . ($this->y + 1) . ';' . ($this->x + 1) . 'H';
         }
 
-        // change forground colour if needed
+        // change foreground colour if needed
         if ($fgColour != $this->fgColour) {
             $this->fgColour = $fgColour;
             echo "\033[" . ($fgColours[$fgColour] ?? '0;37') . 'm';
@@ -77,5 +76,13 @@ class Screen {
         $this->x += strlen($string);
         $this->y += floor($this->x / $width);
         $this->x = $this->x % $width;
+    }
+
+    public function printNewLine(): void {
+        echo "\n";
+        $height = exec('tput lines');
+
+        $this->x = 0;
+        $this->y = min($this->y++, $height - 1);
     }
 }
